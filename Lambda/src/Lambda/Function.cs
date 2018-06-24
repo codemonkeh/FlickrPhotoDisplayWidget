@@ -13,12 +13,10 @@ namespace Lambda
         public ILogger Logger { get; set; } = new Logger();
 
         /// <summary>
-        /// A simple function that takes a string and does a ToUpper
         /// </summary>
-        /// <param name="input"></param>
         /// <param name="context"></param>
         /// <returns></returns>
-        public void FunctionHandler(string input, ILambdaContext context)
+        public void FunctionHandler(ILambdaContext context)
         {
             try
             {
@@ -27,6 +25,16 @@ namespace Lambda
                 // verify configuration
 
                 // download file from flickr
+                
+                //using (var client = new WebClient())
+                //{
+                //    const string FILENAME = "photo.jpg";
+                //    var outputFile = $".\\{FILENAME}";
+                //    if (File.Exists(outputFile)) File.Delete(outputFile);
+
+                //    client.DownloadFile(new Uri(photo.Medium640Url), outputFile);
+                //}
+
                 // resize the file, possibly to multiple different sizes
                 // copy file to S3 bucket
             }

@@ -1,15 +1,27 @@
 using System;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
+using FlickrNet;
 
 namespace Lambda
 {
+    public enum PhotoSize
+    {
+        Large = 0,        
+        Medium,
+        Small,
+        Original
+    }
+
+    //todo: add integration tests
+    //todo: store api details externally (secrets?)
     public class FlickrApi
     {
         private readonly ILogger _logger;
-        private string _apiKey;
-        private string _apiSecret;
+        private readonly string _apiKey;
+        private readonly string _apiSecret;
 
         public FlickrApi(ILogger logger, string apiKey, string apiSecret)
         {
@@ -18,7 +30,7 @@ namespace Lambda
             _apiSecret = apiSecret;
         }
 
-        public async Task GetLatestPhotoUrl(string userId)
+        public async Task<string> GetLastUploadedPhotoUrl(string userId, PhotoSize size = PhotoSize.Large)
         {
             var service = new Flickr(_apiKey, _apiSecret);
 
@@ -29,19 +41,30 @@ namespace Lambda
             };
             var photos = await service.PhotosSearchAsync(options);
 
-            foreach (Photo photo in photos)
+            if (photos.Any())
             {
-                _logger.Log("Photo ID={0} Title=\"{1}\", Uploaded on {2}, URL={3}", photo.PhotoId, photo.Title, photo.DateUploaded, photo.Medium640Url);
+                _logger.Log($"{photos.Count} photos found.");
 
-                //using (var client = new WebClient())
-                //{
-                //    const string FILENAME = "photo.jpg";
-                //    var outputFile = $".\\{FILENAME}";
-                //    if (File.Exists(outputFile)) File.Delete(outputFile);
+                var photo = photos[0];
+                _logger.Log("Photo Id={0} Title=\"{1}\", Uploaded on {2}, URL={3}", photo.PhotoId, photo.Title,
+                    photo.DateUploaded, photo.Medium640Url);
 
-                //    client.DownloadFile(new Uri(photo.Medium640Url), outputFile);
-                //}
+                switch (size)
+                {
+                    case PhotoSize.Original:
+                        return photo.OriginalUrl;
+                    case PhotoSize.Medium:
+                        return photo.MediumUrl;
+                    case PhotoSize.Small:
+                        return photo.SmallUrl;
+                    default:
+                        // you may not be able to access the original version of another user's photo
+                        return photo.LargeUrl;
+                }
             }
+
+            _logger.Log("No photos found.");
+            return null;
         }
     }
 }

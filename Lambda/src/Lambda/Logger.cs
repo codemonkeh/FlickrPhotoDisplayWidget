@@ -3,8 +3,8 @@
 namespace Lambda
 {
     public interface ILogger
-    {
-        void Log(string message);
+    {        
+        void Log(string format, params object[] args);
         void LogError(string message, Exception ex = null);
     }
 
@@ -13,9 +13,9 @@ namespace Lambda
     /// </summary>
     public class Logger : ILogger
     {
-        public void Log(string message)
+        public void Log(string format, params object[] args)
         {
-            Console.WriteLine($"INFO: {message}");
+            Console.WriteLine($"INFO: {string.Format(format, args)}");
         }
 
         public void LogError(string message, Exception ex = null)
