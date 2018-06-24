@@ -9,7 +9,7 @@ The widget will comprise of two parts:
 
 ## Web App
 
-* The website will be a simple bootstrapmock-up to demonstrate the widget's design.
+* The website will be a simple bootstrap mock-up to demonstrate the widget's design.
 
 ## Widget
 
@@ -22,7 +22,7 @@ The widget will comprise of two parts:
 
 ## AWS Lambda
 
-* The lambda will be written in C#.
+* The lambda will be written in C#
 * The lambda will be scheduled on an infrequent schedule, such as once a day.
 * The lambda will download the last photo in my photostream, sorted by uploaded date descendingly, and store it in a temporary directory.
 * The photo will be processed, resizing it but preserving EXIF data (e.g. copyright), and saved to the temporary directory.

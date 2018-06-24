@@ -12,16 +12,33 @@ namespace Lambda
 {
     public class Function
     {
-        
+        public ILog Logger { get; set; } = new Logger();
+
         /// <summary>
         /// A simple function that takes a string and does a ToUpper
         /// </summary>
         /// <param name="input"></param>
         /// <param name="context"></param>
         /// <returns></returns>
-        public string FunctionHandler(string input, ILambdaContext context)
+        public void FunctionHandler(string input, ILambdaContext context)
         {
-            return input?.ToUpper();
+            try
+            {
+                //context.ClientContext.Environment[]
+
+                // verify configuration
+
+                // download file from flickr
+                // resize the file, possibly to multiple different sizes
+                // copy file to S3 bucket
+            }
+            catch (Exception ex)
+            {
+                Logger.LogError("Unhandled exception", ex);
+
+                // rethrow it, full contextual information will be recorded
+                throw;
+            }            
         }
     }
 }
