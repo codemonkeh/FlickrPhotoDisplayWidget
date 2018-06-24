@@ -2,7 +2,7 @@
 
 namespace Lambda
 {
-    public interface ILog
+    public interface ILogger
     {
         void Log(string message);
         void LogError(string message, Exception ex = null);
@@ -11,7 +11,7 @@ namespace Lambda
     /// <summary>
     /// Simple logger wrapper. All messages to the console will be recorded in CloudWatch logs
     /// </summary>
-    public class Logger : ILog
+    public class Logger : ILogger
     {
         public void Log(string message)
         {
