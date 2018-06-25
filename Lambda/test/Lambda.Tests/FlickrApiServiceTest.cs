@@ -4,6 +4,7 @@ using System.IO;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
+using Lambda.Services;
 using Moq;
 using Newtonsoft.Json;
 using Xunit;
@@ -36,8 +37,8 @@ namespace Lambda.Tests
         {
             //arrange
             var userId = "christianfroehlich";
-            var logger = new Mock<ILogger>();
-            var target = new FlickrApiService(logger.Object, _flickrApiKey, _flickrApiSecret);
+            var logger = new Mock<ILoggingService>();
+            var target = new FlickrService(logger.Object, _flickrApiKey, _flickrApiSecret);
 
             //act
             var url = await target.GetLastUploadedPhotoUrl(userId);

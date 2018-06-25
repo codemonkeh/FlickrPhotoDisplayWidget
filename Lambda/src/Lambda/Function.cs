@@ -47,8 +47,8 @@ namespace Lambda
             var serviceCollection = new ServiceCollection();
             serviceCollection.AddScoped<IFunctionHandler, FunctionHandler>();
             serviceCollection.AddScoped<IS3FileService, S3FileService>();
-            serviceCollection.AddScoped<IFlickrApiService, FlickrApiService>();
-            serviceCollection.AddScoped<ILogger, Logger>();
+            serviceCollection.AddScoped<IFlickrService, FlickrService>();
+            serviceCollection.AddScoped<ILoggingService, LoggingService>();
             Container = serviceCollection.BuildServiceProvider();
         }
     }

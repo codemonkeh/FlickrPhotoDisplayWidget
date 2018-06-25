@@ -12,7 +12,7 @@ namespace Lambda.Services
 
     public class FunctionHandler : IFunctionHandler
     {
-        public FunctionHandler(ILogger logger)
+        public FunctionHandler(ILoggingService logger)
         {
             if (logger == null) throw new ArgumentNullException(nameof(logger));
         }
