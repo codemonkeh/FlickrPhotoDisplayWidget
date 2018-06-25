@@ -10,13 +10,13 @@ using Xunit;
 
 namespace Lambda.Tests
 {
-    public class FlickrApiTest
+    public class FlickrApiServiceTest
     {
         private string _flickrApiKey;
         private string _flickrApiSecret;
         private const string FILENAME_SECRETS = "secrets.json";
 
-        public FlickrApiTest()
+        public FlickrApiServiceTest()
         {
             // store api information in a secret json file that will not be checked into source control
             // the Lambda will use environmental configuration to store this data
