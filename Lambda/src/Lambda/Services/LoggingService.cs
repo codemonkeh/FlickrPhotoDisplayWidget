@@ -9,12 +9,14 @@ namespace Lambda.Services
     {
         public void Log(string format, params object[] args)
         {
-            Console.WriteLine($"INFO: {string.Format(format, args)}");
+            if (format != null) 
+                Console.WriteLine($"INFO: {string.Format(format, args)}");
         }
 
         public void LogError(string message, Exception ex = null)
         {
-            Console.WriteLine($"ERROR: {message} { ex?.Message?? string.Empty}");
+            if (message != null)
+                Console.WriteLine($"ERROR: {message} { ex?.Message?? string.Empty}");
         }
     }
 }

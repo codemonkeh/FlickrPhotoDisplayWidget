@@ -12,6 +12,7 @@ namespace Lambda.Services
         Original
     }
 
+    // Need to install FlickrNetCore from myget.org
     public class FlickrService : IFlickrService
     {
         private readonly ILoggingService _logger;
