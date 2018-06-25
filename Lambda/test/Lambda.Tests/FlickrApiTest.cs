@@ -33,7 +33,7 @@ namespace Lambda.Tests
             //arrange
             var userId = "christianfroehlich";
             var logger = new Mock<ILogger>();
-            var target = new FlickrApi(logger.Object, _flickrApiKey, _flickrApiSecret);
+            var target = new FlickrApiService(logger.Object, _flickrApiKey, _flickrApiSecret);
 
             //act
             var url = await target.GetLastUploadedPhotoUrl(userId);
