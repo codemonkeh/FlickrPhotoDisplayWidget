@@ -1,11 +1,8 @@
-using System;
-using System.IO;
 using System.Linq;
-using System.Net;
 using System.Threading.Tasks;
 using FlickrNet;
 
-namespace Lambda
+namespace Lambda.Services
 {
     public enum PhotoSize
     {
@@ -15,13 +12,13 @@ namespace Lambda
         Original
     }
 
-    public class FlickrApiService : IFlickrApiService
+    public class FlickrService : IFlickrService
     {
-        private readonly ILogger _logger;
+        private readonly ILoggingService _logger;
         private readonly string _apiKey;
         private readonly string _apiSecret;
 
-        public FlickrApiService(ILogger logger, string apiKey, string apiSecret)
+        public FlickrService(ILoggingService logger, string apiKey, string apiSecret)
         {
             _logger = logger;
             _apiKey = apiKey;

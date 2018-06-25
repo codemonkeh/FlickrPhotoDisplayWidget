@@ -1,8 +1,8 @@
 using System.Threading.Tasks;
 
-namespace Lambda
+namespace Lambda.Services
 {
-    public interface IFlickrApiService
+    public interface IFlickrService
     {
         Task<string> GetLastUploadedPhotoUrl(string userId, PhotoSize size = PhotoSize.Large);
     }

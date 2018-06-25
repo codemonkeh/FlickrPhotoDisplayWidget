@@ -1,17 +1,11 @@
 ﻿using System;
 
-namespace Lambda
+namespace Lambda.Services
 {
-    public interface ILogger
-    {        
-        void Log(string format, params object[] args);
-        void LogError(string message, Exception ex = null);
-    }
-
     /// <summary>
     /// Simple logger wrapper. All messages to the console will be recorded in CloudWatch logs
     /// </summary>
-    public class Logger : ILogger
+    public class LoggingService : ILoggingService
     {
         public void Log(string format, params object[] args)
         {

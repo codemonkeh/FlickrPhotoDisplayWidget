@@ -10,9 +10,9 @@ namespace Lambda.Services
     // * AWSSDK.Extensions.NETCore.Setup (and perhaps AWSSDK.S3?)
     public class S3FileService : IS3FileService
     {
-        private readonly ILogger _logger;
+        private readonly ILoggingService _logger;
 
-        public S3FileService(ILogger logger)
+        public S3FileService(ILoggingService logger)
         {
             _logger = logger;
         }
