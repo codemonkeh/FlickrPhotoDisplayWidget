@@ -38,10 +38,10 @@ namespace Lambda.Tests
             //arrange
             var userId = "christianfroehlich";
             var logger = new Mock<ILoggingService>();
-            var target = new FlickrService(logger.Object, _flickrApiKey, _flickrApiSecret);
+            var target = new FlickrService(logger.Object);
 
             //act
-            var url = await target.GetLastUploadedPhotoUrl(userId);
+            var url = await target.GetLastUploadedPhotoUrl(_flickrApiKey, _flickrApiSecret, userId);
 
             //assert
             // will throw an exception if there is no user

@@ -15,19 +15,15 @@ namespace Lambda.Services
     public class FlickrService : IFlickrService
     {
         private readonly ILoggingService _logger;
-        private readonly string _apiKey;
-        private readonly string _apiSecret;
 
-        public FlickrService(ILoggingService logger, string apiKey, string apiSecret)
+        public FlickrService(ILoggingService logger)
         {
             _logger = logger;
-            _apiKey = apiKey;
-            _apiSecret = apiSecret;
         }
 
-        public async Task<string> GetLastUploadedPhotoUrl(string userId, PhotoSize size = PhotoSize.Large)
+        public async Task<string> GetLastUploadedPhotoUrl(string apiKey, string apiSecret, string userId, PhotoSize size = PhotoSize.Large)
         {
-            var service = new Flickr(_apiKey, _apiSecret);
+            var service = new Flickr(apiKey, apiSecret);
 
             var options = new PhotoSearchOptions(userId)
             {

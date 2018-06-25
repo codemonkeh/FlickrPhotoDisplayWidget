@@ -4,6 +4,6 @@ namespace Lambda.Services
 {
     public interface IFlickrService
     {
-        Task<string> GetLastUploadedPhotoUrl(string userId, PhotoSize size = PhotoSize.Large);
+        Task<string> GetLastUploadedPhotoUrl(string apiKey, string apiSecret, string userId, PhotoSize size = PhotoSize.Large);
     }
 }
