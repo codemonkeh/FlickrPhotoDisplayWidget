@@ -2,6 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Amazon.Lambda.Core;
+using Lambda.Services;
+using Microsoft.Extensions.DependencyInjection;
 
 // Assembly attribute to enable the Lambda function's JSON input to be converted into a .NET class.
 [assembly: LambdaSerializer(typeof(Amazon.Lambda.Serialization.Json.JsonSerializer))]
@@ -10,7 +12,7 @@ namespace Lambda
 {
     public class Function
     {
-        public ILogger Logger { get; set; } = new Logger();
+        public static ServiceProvider Container { get; set; }
 
         /// <summary>
         /// </summary>
@@ -19,32 +21,35 @@ namespace Lambda
         public void FunctionHandler(ILambdaContext context)
         {
             try
-            {
-                //context.ClientContext.Environment[]
+            {                
+                // configure DI
+                RegisterServices();
 
-                // verify configuration
+                var serviceScopeFactory = Container.GetRequiredService<IServiceScopeFactory>();
+                using (var scope = serviceScopeFactory.CreateScope())
+                {
+                    //todo: verify configuration?
 
-                // download file from flickr
-                
-                //using (var client = new WebClient())
-                //{
-                //    const string FILENAME = "photo.jpg";
-                //    var outputFile = $".\\{FILENAME}";
-                //    if (File.Exists(outputFile)) File.Delete(outputFile);
-
-                //    client.DownloadFile(new Uri(photo.Medium640Url), outputFile);
-                //}
-
-                // resize the file, possibly to multiple different sizes
-                // copy file to S3 bucket
+                    var processor = scope.ServiceProvider.GetService<IFunctionHandler>();
+                    processor.Handle(context);
+                }                
             }
             catch (Exception ex)
-            {
-                Logger.LogError("Unhandled exception", ex);
-
+            {       
+                Console.WriteLine("Unhandled exception");
                 // rethrow it, full contextual information will be recorded
                 throw;
             }            
+        }
+
+        private void RegisterServices()
+        {
+            var serviceCollection = new ServiceCollection();
+            serviceCollection.AddScoped<IFunctionHandler, FunctionHandler>();
+            serviceCollection.AddScoped<IS3FileService, S3FileService>();
+            serviceCollection.AddScoped<IFlickrApiService, FlickrApiService>();
+            serviceCollection.AddScoped<ILogger, Logger>();
+            Container = serviceCollection.BuildServiceProvider();
         }
     }
 }

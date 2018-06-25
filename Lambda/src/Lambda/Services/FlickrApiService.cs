@@ -15,13 +15,6 @@ namespace Lambda
         Original
     }
 
-    public interface IFlickrApiService
-    {
-        Task<string> GetLastUploadedPhotoUrl(string userId, PhotoSize size = PhotoSize.Large);
-    }
-
-    //todo: add integration tests
-    //todo: store api details externally (secrets?)
     public class FlickrApiService : IFlickrApiService
     {
         private readonly ILogger _logger;

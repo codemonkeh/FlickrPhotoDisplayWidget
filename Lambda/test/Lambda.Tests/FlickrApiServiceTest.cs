@@ -27,6 +27,10 @@ namespace Lambda.Tests
             _flickrApiSecret = secrets.flickrApiSecret;
         }
 
+        /* Unit Tests */
+        //todo...
+
+        /* Integration Tests */
         [Fact]
         public async Task GetLastUploadedPhotoUrl_FunctionTest_ShouldReturnFileUrl()
         {
