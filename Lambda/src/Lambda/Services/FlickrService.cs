@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 using FlickrNet;
@@ -24,6 +25,10 @@ namespace Lambda.Services
 
         public async Task<string> GetLastUploadedPhotoUrl(string apiKey, string apiSecret, string userId, PhotoSize size = PhotoSize.Large)
         {
+            if (apiKey == null) throw new ArgumentNullException(nameof(apiKey));
+            if (apiSecret == null) throw new ArgumentNullException(nameof(apiSecret));
+            if (userId == null) throw new ArgumentNullException(nameof(userId));
+
             var service = new Flickr(apiKey, apiSecret);
 
             var options = new PhotoSearchOptions(userId)
@@ -31,12 +36,14 @@ namespace Lambda.Services
                 PerPage = 1,
                 Extras = PhotoSearchExtras.DateUploaded
             };
+
+            _logger.LogDebug(() => $"Using Flickr user id: '{userId}'");
+            _logger.Log($"Searching for latest photo ...");
             var photos = await service.PhotosSearchAsync(options);
+            _logger.Log($"{photos.Count} photos found.");
 
             if (photos.Any())
-            {
-                _logger.Log($"{photos.Count} photos found.");
-
+            {                
                 var photo = photos[0];
                 _logger.Log("Photo Id={0} Title=\"{1}\", Uploaded on {2}, URL={3}", photo.PhotoId, photo.Title,
                     photo.DateUploaded, photo.Medium640Url);

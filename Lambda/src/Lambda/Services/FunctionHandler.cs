@@ -1,42 +1,55 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading.Tasks;
 using Amazon.Lambda.Core;
 
 namespace Lambda.Services
 {
     public class FunctionHandler : IFunctionHandler
     {
-        public FunctionHandler(ILoggingService logger)
+        private readonly IFlickrService _flickrService;
+        private readonly IDownloadService _downloadService;
+        private readonly ILoggingService _logger;
+        private readonly IConfigurationService _configurationService;
+
+
+        public FunctionHandler(ILoggingService logger, IConfigurationService configurationService, IFlickrService flickrService, IDownloadService downloadService)
         {
-            if (logger == null) throw new ArgumentNullException(nameof(logger));
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            _configurationService = configurationService ?? throw new ArgumentNullException(nameof(configurationService));
+            _flickrService = flickrService ?? throw new ArgumentNullException(nameof(flickrService));
+            _downloadService = downloadService ?? throw new ArgumentNullException(nameof(downloadService));
         }
 
         /// <summary>
         /// Main entry point for the lambda
         /// </summary>
         /// <param name="context"></param>
-        public void Handle(ILambdaContext context)
+        public async Task Handle(ILambdaContext context)
         {
             if (context == null) throw new ArgumentNullException(nameof(context));
 
-            //context.ClientContext.Environment[]
+            //todo: supply / validate configuration
+            //var endPoint = "ap-southeast-2";
+
+            var apiKey = _configurationService.FlickrApiKey;
+            var apiSecret = _configurationService.FlickrApiSecret;
+            var userId = _configurationService.FlickrUserId;            
 
             // download file from flickr
+            var url = await _flickrService.GetLastUploadedPhotoUrl(apiKey, apiSecret, userId, PhotoSize.Small);
+            if (!string.IsNullOrWhiteSpace(url))
+            {
+                var localFilename = $"/tmp/lastPhoto.jpg";
+                _downloadService.DownloadFile(url, localFilename);
 
-            //using (var client = new WebClient())
-            //{
-            //    const string FILENAME = "photo.jpg";
-            //    var outputFile = $".\\{FILENAME}";
-            //    if (File.Exists(outputFile)) File.Delete(outputFile);
+                //todo: 
+                // resize the file, possibly to multiple different sizes
+                // copy file to S3 bucket
+            }
 
-            //    client.DownloadFile(new Uri(photo.Medium640Url), outputFile);
-            //}
-
-            // resize the file, possibly to multiple different sizes
-            // copy file to S3 bucket
-
-            throw new NotImplementedException();
+            //context.ClientContext.Environment[]
         }
     }
 }

@@ -24,13 +24,19 @@ namespace Lambda.Services
         }
 
         public void DownloadFile(Uri uri, string localFilename)
-        {
+        {            
             using (var client = new WebClient())
-            {
+            {                
                 if (File.Exists(localFilename))
+                {
+                    _logger.LogDebug(() => $"'{localFilename}' exists, attempting to delete...");
                     File.Delete(localFilename);
+                    _logger.LogDebug(() => $"'{localFilename}' deleted.");
+                }
 
+                _logger.LogDebug(() => $"Attempting to download from url '{uri.AbsoluteUri}' to file '{localFilename}'");
                 client.DownloadFile(uri, localFilename);
+                _logger.Log($"Downloaded from url '{uri.AbsoluteUri}' to file '{localFilename}'");
             }
         }
     }

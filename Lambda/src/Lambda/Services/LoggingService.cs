@@ -7,10 +7,20 @@ namespace Lambda.Services
     /// </summary>
     public class LoggingService : ILoggingService
     {
+        //todo: specify this from configuration
+        private const bool _debugMode = true;
+
         public void Log(string format, params object[] args)
         {
             if (format != null) 
                 Console.WriteLine($"INFO: {string.Format(format, args)}");
+        }
+
+        public void LogDebug(Func<string> loggingFunc)
+        {
+            if (loggingFunc == null) throw new ArgumentNullException(nameof(loggingFunc));
+            
+            if (_debugMode) Console.WriteLine($"DEBUG: {loggingFunc()}");
         }
 
         public void LogError(string message, Exception ex = null)

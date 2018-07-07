@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Amazon.Lambda.Core;
 using Lambda.Services;
 using Microsoft.Extensions.DependencyInjection;
@@ -18,7 +19,7 @@ namespace Lambda
         /// </summary>
         /// <param name="context"></param>
         /// <returns></returns>
-        public void FunctionHandler(ILambdaContext context)
+        public async Task FunctionHandler(ILambdaContext context)
         {
             try
             {                
@@ -31,7 +32,7 @@ namespace Lambda
                     //todo: verify configuration?
 
                     var processor = scope.ServiceProvider.GetService<IFunctionHandler>();
-                    processor.Handle(context);
+                    await processor.Handle(context);
                 }                
             }
             catch (Exception ex)
@@ -45,8 +46,10 @@ namespace Lambda
         private void RegisterServices()
         {
             var serviceCollection = new ServiceCollection();
+            serviceCollection.AddScoped<IConfigurationService, ConfigurationService>();
             serviceCollection.AddScoped<IFunctionHandler, FunctionHandler>();
             serviceCollection.AddScoped<IS3FileService, S3FileService>();
+            serviceCollection.AddScoped<IDownloadService, DownloadService>();
             serviceCollection.AddScoped<IFlickrService, FlickrService>();
             serviceCollection.AddScoped<ILoggingService, LoggingService>();
             Container = serviceCollection.BuildServiceProvider();
