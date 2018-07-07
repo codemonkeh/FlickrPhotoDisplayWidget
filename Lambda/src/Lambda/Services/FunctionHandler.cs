@@ -6,6 +6,11 @@ using Amazon.Lambda.Core;
 
 namespace Lambda.Services
 {
+    public interface IFunctionHandler
+    {
+        Task Handle(ILambdaContext context);
+    }
+
     public class FunctionHandler : IFunctionHandler
     {
         private readonly IFlickrService _flickrService;

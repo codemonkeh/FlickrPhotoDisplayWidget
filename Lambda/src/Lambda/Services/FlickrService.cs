@@ -13,6 +13,11 @@ namespace Lambda.Services
         Original
     }
 
+    public interface IFlickrService
+    {
+        Task<string> GetLastUploadedPhotoUrl(string apiKey, string apiSecret, string userId, PhotoSize size = PhotoSize.Large);
+    }
+
     // Need to install FlickrNetCore from myget.org
     public class FlickrService : IFlickrService
     {

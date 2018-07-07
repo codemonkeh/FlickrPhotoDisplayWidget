@@ -8,6 +8,11 @@ using Amazon.S3.Transfer;
 
 namespace Lambda.Services
 {
+    public interface IS3FileService
+    {
+        Task UploadFile(string filePath, string bucketName, string keyName, string regionSystemName);
+    }
+
     // need to install nuget packages:
     // * AWSSDK.S3
     // * AWSSDK.Extensions.NETCore.Setup

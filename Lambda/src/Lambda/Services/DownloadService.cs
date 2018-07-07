@@ -6,6 +6,12 @@ using System.Text;
 
 namespace Lambda.Services
 {
+    public interface IDownloadService
+    {
+        void DownloadFile(string url, string localFilename);
+        void DownloadFile(Uri uri, string localFilename);
+    }
+
     public class DownloadService : IDownloadService
     {
         private readonly ILoggingService _logger;
