@@ -13,8 +13,8 @@
     <PackageReference Include="AWSSDK.Extensions.NETCore.Setup" Version="3.3.6" />
     <PackageReference Include="AWSSDK.S3" Version="3.3.24.1" />
     <PackageReference Include="flickrnetcore" Version="1.0.0" />
+    <PackageReference Include="Magick.NET-Q8-AnyCPU" Version="7.8.0" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="2.1.1" />
-    <PackageReference Include="System.Drawing.Common" Version="4.5.0" />
   </ItemGroup>
 
   <ItemGroup>

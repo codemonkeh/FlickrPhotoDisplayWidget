@@ -38,8 +38,6 @@ namespace Lambda.Services
             await UploadFile(filePath, bucketName, keyName, endPoint);
         }
 
-        //todo: test
-        //var bucketRegion = RegionEndpoint.APSoutheast2; //Sydney
         public async Task UploadFile(string filePath, string bucketName, string keyName, RegionEndpoint bucketRegion)
         {
             if (filePath == null) throw new ArgumentNullException(nameof(filePath));
@@ -49,12 +47,12 @@ namespace Lambda.Services
 
             try
             {
-                _logger.Log($"Attempting to upload file to S3 with local path \"{filePath}\"...");
+                _logger.Log($"Attempting to upload file to S3 with local path \"{filePath}\" to \"{keyName}\"");
 
                 // the client should probably be static if this function was heavily used
                 using (var s3Client = new AmazonS3Client(bucketRegion))
-                using (var fileTransferUtility = new TransferUtility(s3Client))
-                    await fileTransferUtility.UploadAsync(filePath, bucketName, keyName);
+                using (var transferUtility = new TransferUtility(s3Client))
+                    await transferUtility.UploadAsync(filePath, bucketName, keyName);
 
                 _logger.Log($"File upload complete.");
             }

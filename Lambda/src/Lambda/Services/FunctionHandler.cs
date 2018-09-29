@@ -1,11 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Drawing;
-using System.Drawing.Drawing2D;
 using System.IO;
 using System.Text;
 using System.Threading.Tasks;
 using Amazon.Lambda.Core;
+using ImageMagick;
 
 namespace Lambda.Services
 {
@@ -51,40 +50,32 @@ namespace Lambda.Services
             var url = await _flickrService.GetLastUploadedPhotoUrl(apiKey, apiSecret, userId, PhotoSize.Small);
             if (!string.IsNullOrWhiteSpace(url))
             {
-                var localFilename = $"/tmp/lastPhoto.jpg";
-                _downloadService.DownloadFile(url, localFilename);
+                const string TEMP_FOLDER = "/tmp";
+                var localPath = $"{TEMP_FOLDER}/lastPhoto.jpg";
+                _downloadService.DownloadFile(url, localPath);
 
-                //todo: 
-                // resize the file, possibly to multiple different sizes
                 //todo: size?
                 const int MAX_WIDTH = 150; //todo: set proper size
-                var localImage = Image.FromFile(localFilename);                
-                //var max = Math.Max(localImage.Width, localImage.Height);
-                var factor = localImage.Width / MAX_WIDTH;
-                int newWidth = localImage.Width * factor;
-                int newHeight = localImage.Height * factor;
-
-                _logger.Log($"Resizing image...");
-                Bitmap newImage = new Bitmap(newWidth, newHeight);
-                using (Graphics gr = Graphics.FromImage(newImage))
+                
+                _logger.Log($"Resizing image...");                        
+                var file = new FileInfo(localPath);
+                var newFilename = $"{TEMP_FOLDER}/resizedPhoto_w{MAX_WIDTH}.jpg";
+                MagickAnyCPU.CacheDirectory = "/tmp";
+                using (var image = new MagickImage(file))
                 {
-                    gr.SmoothingMode = SmoothingMode.HighQuality;
-                    gr.InterpolationMode = InterpolationMode.HighQualityBicubic;
-                    gr.PixelOffsetMode = PixelOffsetMode.HighQuality;
-                    gr.DrawImage(localImage, new Rectangle(0, 0, newWidth, newHeight));
-                }             
-
-                var newFilename = $"{Path.GetFileNameWithoutExtension(localFilename)}_w{MAX_WIDTH}.jpg";
-                newImage.Save($"/tmp/{newFilename}");
+                    var factor = image.Width / MAX_WIDTH;
+                    int newWidth = image.Width * factor;
+                    int newHeight = image.Height * factor;
+                    image.Resize(newWidth, newHeight);
+                    image.Write(newFilename);
+                }                
                 _logger.Log($"Resized image saved to \"{newFilename}\".");
 
                 // copy file to S3 bucket
 
-                var key = $"/images/{newFilename}";
+                var key = $"images/flickrLatest.jpg";
                 await _s3FileService.UploadFile(newFilename, bucketName, key, s3Region);
             }
-
-            //context.ClientContext.Environment[]
         }
     }
 }
