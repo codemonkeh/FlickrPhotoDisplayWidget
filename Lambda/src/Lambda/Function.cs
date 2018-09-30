@@ -52,6 +52,7 @@ namespace Lambda
             serviceCollection.AddScoped<IDownloadService, DownloadService>();
             serviceCollection.AddScoped<IFlickrService, FlickrService>();
             serviceCollection.AddScoped<ILoggingService, LoggingService>();
+            serviceCollection.AddScoped<IImageService, ImageService>();
             Container = serviceCollection.BuildServiceProvider();
         }
     }
