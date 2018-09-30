@@ -19,14 +19,15 @@ namespace Lambda.Services
         private readonly IConfigurationService _configurationService;
 
 
-        public FunctionHandler(ILoggingService logger, IConfigurationService configurationService, IFlickrService flickrService, IDownloadService downloadService, IS3FileService s3FileService, IImageService imageService)
+        public FunctionHandler(ILoggingService logger, IConfigurationService configurationService, IFlickrService flickrService, 
+                               IDownloadService downloadService, IS3FileService s3FileService, IImageService imageService)
         {
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _configurationService = configurationService ?? throw new ArgumentNullException(nameof(configurationService));
             _flickrService = flickrService ?? throw new ArgumentNullException(nameof(flickrService));
             _downloadService = downloadService ?? throw new ArgumentNullException(nameof(downloadService));
-            _s3FileService = s3FileService;
-            _imageService = imageService;
+            _s3FileService = s3FileService ?? throw new ArgumentNullException(nameof(s3FileService));
+            _imageService = imageService ?? throw new ArgumentNullException(nameof(imageService));
         }
 
         /// <summary>
@@ -37,8 +38,6 @@ namespace Lambda.Services
         {
             if (context == null) throw new ArgumentNullException(nameof(context));
 
-            //todo: supply / validate configuration
-            const string TEMP_FOLDER = "/tmp";
             var apiKey = _configurationService.FlickrApiKey;
             var apiSecret = _configurationService.FlickrApiSecret;
             var userId = _configurationService.FlickrUserId;
@@ -50,12 +49,11 @@ namespace Lambda.Services
             var url = await _flickrService.GetLastUploadedPhotoUrl(apiKey, apiSecret, userId, PhotoSize.Small);
             if (!string.IsNullOrWhiteSpace(url))
             {                
-                var localPath = $"{TEMP_FOLDER}/lastPhoto.jpg";
-                _downloadService.DownloadFile(url, localPath);
-                var newFilename = _imageService.ResizeImage(localPath, resizeToWidth);
+                var downloadedFile = _downloadService.DownloadFile(url);
+                var resizedFile = _imageService.ResizeImage(downloadedFile, resizeToWidth);
 
-                var key = $"images/flickrLatest.jpg";
-                await _s3FileService.UploadFile(newFilename, bucketName, key, s3Region);
+                var key = _configurationService.S3UploadKey;
+                await _s3FileService.UploadFile(resizedFile, bucketName, key, s3Region);
             }
         }
     }

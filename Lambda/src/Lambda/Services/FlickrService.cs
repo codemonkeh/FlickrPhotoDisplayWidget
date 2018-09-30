@@ -18,14 +18,15 @@ namespace Lambda.Services
         Task<string> GetLastUploadedPhotoUrl(string apiKey, string apiSecret, string userId, PhotoSize size = PhotoSize.Large);
     }
 
-    // Need to install FlickrNetCore from myget.org
+    // Need to install:
+    //  * FlickrNetCore from myget.org
     public class FlickrService : IFlickrService
     {
         private readonly ILoggingService _logger;
 
         public FlickrService(ILoggingService logger)
         {
-            _logger = logger;
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
         public async Task<string> GetLastUploadedPhotoUrl(string apiKey, string apiSecret, string userId, PhotoSize size = PhotoSize.Large)

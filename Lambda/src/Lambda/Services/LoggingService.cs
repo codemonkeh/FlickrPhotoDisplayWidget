@@ -14,7 +14,7 @@ namespace Lambda.Services
     /// </summary>
     public class LoggingService : ILoggingService
     {
-        //todo: specify this from configuration
+        // probably should be configurable
         private const bool _debugMode = true;
 
         public void Log(string format, params object[] args)

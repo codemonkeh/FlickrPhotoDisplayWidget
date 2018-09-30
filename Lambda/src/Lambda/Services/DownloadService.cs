@@ -6,31 +6,33 @@ namespace Lambda.Services
 {
     public interface IDownloadService
     {
-        void DownloadFile(string url, string localFilename);
-        void DownloadFile(Uri uri, string localFilename);
+        string DownloadFile(string url);
+        string DownloadFile(Uri uri);
     }
 
     public class DownloadService : IDownloadService
     {
         private readonly ILoggingService _logger;
+        private readonly IConfigurationService _configurationService;
 
-        public DownloadService(ILoggingService logger)
+        public DownloadService(ILoggingService logger, IConfigurationService configurationService)
         {
-            _logger = logger;
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            _configurationService = configurationService ?? throw new ArgumentNullException(nameof(configurationService));
         }
 
-        public void DownloadFile(string url, string localFilename)
+        public string DownloadFile(string url)
         {
             if (url == null) throw new ArgumentNullException(nameof(url));
-            if (localFilename == null) throw new ArgumentNullException(nameof(localFilename));
 
-            DownloadFile(new Uri(url), localFilename);
+            return DownloadFile(new Uri(url));
         }
 
-        public void DownloadFile(Uri uri, string localFilename)
+        public string DownloadFile(Uri uri)
         {            
             using (var client = new WebClient())
-            {                
+            {
+                var localFilename = $"{_configurationService.TempFolder}/download.jpg";
                 if (File.Exists(localFilename))
                 {
                     _logger.LogDebug(() => $"'{localFilename}' exists, attempting to delete...");
@@ -41,6 +43,7 @@ namespace Lambda.Services
                 _logger.LogDebug(() => $"Attempting to download from url '{uri.AbsoluteUri}' to file '{localFilename}'");
                 client.DownloadFile(uri, localFilename);
                 _logger.Log($"Downloaded from url '{uri.AbsoluteUri}' to file '{localFilename}'");
+                return localFilename;
             }
         }
     }

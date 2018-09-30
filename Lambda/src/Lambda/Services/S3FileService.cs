@@ -20,7 +20,7 @@ namespace Lambda.Services
 
         public S3FileService(ILoggingService logger)
         {
-            _logger = logger;
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
         public async Task UploadFile(string filePath, string bucketName, string keyName, string regionSystemName)
